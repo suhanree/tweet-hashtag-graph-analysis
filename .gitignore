@@ -1,2 +1,3 @@
 tests/
-code/*.pyc
+src/*.pyc
+src/.ropeproject/

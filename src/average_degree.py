@@ -4,7 +4,7 @@ import sys
 import json
 import time
 
-from graph import HashtagGraph
+from graph import TimeWindowGraph
 
 def extract_data(json_data):
     """
@@ -24,7 +24,7 @@ def extract_data(json_data):
         # If there is not created_at field, set timestamp as 0.
         print "KeyError for the key, created_at : timestamp will be 0."
         timestamp = 0
-    
+
     try:
         hashtags = sorted([data['text'] for data in
                                 json_data['entities']['hashtags']])
@@ -39,9 +39,11 @@ def main(input_filename, output_filename):
     """
     Main function to run the program
     """
-    gr = HashtagGraph() # Creating the graph for hashtag object
+    window_size = 60    # Size of the window
+    # Creating the graph for hashtag object
+    gr = TimeWindowGraph(window_size=window_size)
     current_time = gr.get_current_time() # current time initialized at 0.
-    time_threshold = current_time - 60  # We are using 60-second windows.
+    time_threshold = current_time - window_size
 
     with open(input_filename, 'r') as f_in: # Opening input file to get tweets
         with open(output_filename, 'w') as f_out: # Opening output file
@@ -50,7 +52,7 @@ def main(input_filename, output_filename):
                 # extract timestamp (int) and a list of hashtags (str, case
                 # sensitive)
                 (timestamp, hashtags) = extract_data(json_data)
-                        
+
                 print timestamp, hashtags
 
                 # Check the timestamp first.
@@ -60,9 +62,8 @@ def main(input_filename, output_filename):
                     # Set time variables
                     current_time = timestamp
                     gr.set_current_time(timestamp)
-                    time_threshold = timestamp - 60
                     # Remove old links older than 60-second window
-                    gr.remove_old_links(time_threshold) 
+                    gr.remove_old_links()
 
                 # New links are added here.
                 num_hashtags = len(hashtags)
@@ -79,10 +80,10 @@ def main(input_filename, output_filename):
                 # Now writes the degree information to the output file
                 f_out.write("%.2f\n"% gr.average_degree())
 
-                            
-                
 
-        
+
+
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:

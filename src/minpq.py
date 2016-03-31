@@ -2,7 +2,26 @@
 # directory to keep the index information for given key value. Each datapoint
 # will be (key, value), and the priority will be determined by the value.
 class indexedMinPQ:
-    pass
+    def __init__(self):
+        pass
+
+    def add(self, key, value):
+        return True
+
+    def remove(self, key):
+        return True
+
+    def update(self, key, value):
+        return True
+
+    def value(self, key):
+        return 1
+
+    def peek_min(self):
+        return 1
+
+    def pop_min(self):
+        return 1
 
 def main():
     a='a'
