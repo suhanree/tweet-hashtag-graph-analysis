@@ -35,10 +35,11 @@ class TimeWindowGraph:
         self.current_time = 0   # Current time in int.
         self.graph_structure = {}   # dict to represent graph structure
                                     # (key: node, value: set of nodes).
-        self.linkheap = indexedMinPQ()  # Indexed minimum priority queue to
-                                        # remove old links efficiently
-                                        # (log(N) time where N: number of links)
-                                        # (key: (node1, node2), value: time)
+        self.linkheap = indexedMinPQ(dtype='int')  
+                                    # Indexed minimum priority queue to
+                                    # remove old links efficiently
+                                    # (log(N) time where N: number of links)
+                                    # (key: (node1, node2), value: time)
 
     def check_node(self, node):
         """
@@ -178,7 +179,7 @@ class TimeWindowGraph:
         """
         threshold = self.current_time - self.window_size
         while self.linkheap.peek_min() < threshold:
-            node1, node2 = self.linkheap.pop_min()
+            (node1, node2), time  = self.linkheap.pop_min()
             self.remove_link(node1, node2)
             if self.degree(node1) == 0:
                 self.remove_node(node1)
