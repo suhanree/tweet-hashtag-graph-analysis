@@ -33,10 +33,12 @@ class indexedMinPQ:
         Input:
             key: key of the datapoint
             value: value of the datapoint.
+        Output:
+            (bool): True if successful, False if not
         """
         # Do nothing, if key already exists.
         if key in self._key_to_index:
-            return
+            return False
         # Put the new value at the end of the heap.
         self._array[self._heap_size + 1] = value
         self._heap_size += 1
@@ -49,7 +51,7 @@ class indexedMinPQ:
         # the size of self._array.
         if self._heap_size + 1 == len(self._array):
             self._array = np.resize(self._array, len(self._array) * 2)
-        return
+        return True
 
 
     def remove(self, key):
@@ -57,10 +59,12 @@ class indexedMinPQ:
         Remove information about (key, value) pair based on key
         Input:
             key: key of the datapoint.
+        Output:
+            (bool): True if successful, False if not
         """
         # Do nothing, if key does not exist.
         if key not in self._key_to_index:
-            return
+            return False
         # Find the index for the key.
         index = self._key_to_index[key]
         # Then swap this value with the last value in the heap.
@@ -75,7 +79,7 @@ class indexedMinPQ:
         # a quarter of self._array (Note: it is a quarter, not a half.)
         if self._heap_size <= len(self._array) / 4 and self._heap_size > 3:
             self._array = np.resize(self._array, len(self._array)/2)
-        return
+        return True
 
 
     def update(self, key, value):
@@ -84,10 +88,12 @@ class indexedMinPQ:
         Input:
             key: key of the dataporint
             value: value of the datapoint
+        Output:
+            (bool): True if successful, False if not
         """
         # Do nothing, if key does not exist.
         if key not in self._key_to_index:
-            return
+            return False
         # Update the value in self._array.
         index = self._key_to_index[key]
         self._array[index] = value
@@ -96,7 +102,7 @@ class indexedMinPQ:
             self._bubble_up(index)
         else:
             self._bubble_down(index)
-        return
+        return True
 
 
     def value(self, key):
@@ -113,12 +119,13 @@ class indexedMinPQ:
 
     def peek_min(self):
         """
-        Peek the minimum value.
+        Peek the minimum value and return (key, value) pair.
         """
         if self._heap_size == 0:
-            return None   # No value to return
+            return None, None   # No value to return
         else:
-            return self._array[1]    # Value at the root of heap (minimum).
+            # Value at the root of heap (minimum).
+            return self._index_to_key[1], self._array[1]   
 
 
     def pop_min(self):
