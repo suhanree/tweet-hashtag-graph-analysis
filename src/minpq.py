@@ -142,6 +142,15 @@ class indexedMinPQ:
         return key, value
 
 
+    def size(self):
+        """
+        Returns the size of the priority queue
+        Output:
+            size (int): number of (key, value) pairs.
+        """
+        return self._heap_size
+
+
     def write(self):
         """
         Write the stored data to that standard output.

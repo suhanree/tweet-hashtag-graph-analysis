@@ -39,38 +39,44 @@ def main(input_filename, output_filename):
     """
     Main function to run the program
     """
-    window_size = 60    # Size of the window
+    # Size of the window
+    window_size = 60   
     # Creating the graph for hashtag object
     gr = TimeWindowGraph(window_size=window_size)
-    current_time = gr.get_current_time() # current time initialized at 0.
-    time_threshold = current_time - window_size
+    time_threshold = gr.current_time - window_size
 
     with open(input_filename, 'r') as f_in: # Opening input file to get tweets
         with open(output_filename, 'w') as f_out: # Opening output file
-            for line in f_in:
-                json_data = json.loads(line) # dict
-                # extract timestamp (int) and a list of hashtags (str, case
+            for line in f_in: # For every tweet
+                json_data = json.loads(line) # dict representing tweet
+                # Extract timestamp (int) and a list of hashtags (str, case
                 # sensitive)
                 (timestamp, hashtags) = extract_data(json_data)
 
-                print timestamp, hashtags
 
                 # Check the timestamp first.
-                if timestamp < time_threshold: # too old for our graph.
-                    break # do nothing here.
-                elif timestamp > current_time: # becomes the most recent tweet.
-                    # Set time variables
-                    current_time = timestamp
+                if timestamp <= time_threshold: # too old for our graph.
+                    break # do nothing for this tweet.
+                elif timestamp > gr.current_time: # becomes the most recent tweet.
+                    # Set current_time for the graph
+                    # (it will remove old links older than threshold also)
                     gr.set_current_time(timestamp)
-                    # Remove old links older than 60-second window
-                    gr.remove_old_links()
 
-                # New links are added here.
+                # New links (for all possible pairs of hashtags) are added here.
                 num_hashtags = len(hashtags)
                 for i in range(num_hashtags):
                     for j in range(i+1, num_hashtags):
-                        print hashtags[i], hashtags[j]
-                        gr.add_nodes(hashtags[i], hashtags[j])
+                        # First, check for duplicate hashtags
+                        if hashtags[i] == hashtags[j]:
+                            continue
+                        # Second, try to add both nodes (this method will do nothing
+                        # if the given node already exists)
+                        gr.add_node(hashtags[i])
+                        gr.add_node(hashtags[j])
+                        # Third, (1) try to find if the link already exists;
+                        # and (2) if so, what the timestamp of that link is.
+                        # Here timestamp (epoch time) is a non-negative
+                        # integer, so -1 indicates there is no link.
                         timestamp_link = gr.check_link(hashtags[i], hashtags[j])
                         if timestamp_link < 0: # No link exists.
                             gr.add_link(hashtags[i], hashtags[j], timestamp)
@@ -79,10 +85,6 @@ def main(input_filename, output_filename):
 
                 # Now writes the degree information to the output file
                 f_out.write("%.2f\n"% gr.average_degree())
-
-
-
-
 
 
 if __name__ == "__main__":

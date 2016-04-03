@@ -169,7 +169,6 @@ class TimeWindowGraph:
             return False
         else:
             node_pair = (node1, node2) if node1 < node2 else (node2, node1)
-            self._linkheap.write()
             if self._linkheap.remove(node_pair):
                 self._graph_structure[node1].remove(node2)
                 self._graph_structure[node2].remove(node1)
@@ -191,7 +190,6 @@ class TimeWindowGraph:
             return None, None
         else:
             (node1, node2), time = self._linkheap.pop_min()
-            #print (node1, node2), time
             if time is not None:
                 self._graph_structure[node1].remove(node2)
                 self._graph_structure[node2].remove(node1)
@@ -209,7 +207,7 @@ class TimeWindowGraph:
         for node1 in self._graph_structure:
             for node2 in self._graph_structure[node1]:
                 if node1 < node2:
-                    print node1, "->", node2, ":", \
+                    print repr(node1), "->", repr(node2), ":", \
                         self._linkheap.value((node1,node2))
         print "average degree: %.2f" % self.average_degree()
 
@@ -227,7 +225,8 @@ class TimeWindowGraph:
         """
         if time >= 0:
             self.current_time = int(time)
-            self._remove_old_links()
+            if self.num_links >  0:
+                self._remove_old_links()
 
 
     def _remove_old_links(self):
@@ -237,16 +236,22 @@ class TimeWindowGraph:
         of this operatoin, remove that node, too.
         This method will be called from 'self.set_current_time'.
         """
+        # If there is no link, no need.
+        if self.num_links == 0:
+            return
         threshold = self.current_time - self.window_size
         (node1, node2), time  = self._linkheap.peek_min()
-        #print node1, node2, time, threshold
-        while time < threshold:
+        while time <= threshold: # threshold (=current_time - window_size)
+                                 # is not included in the window.
             (node1, node2), time  = self.remove_min_link()
             if len(self._graph_structure[node1]) == 0:
                 self.remove_node(node1)
             if len(self._graph_structure[node2]) == 0:
                 self.remove_node(node2)
+            if self.num_links == 0:
+                break
             (node1, node2), time  = self._linkheap.peek_min()
+        return
 
 
 def main():
@@ -268,7 +273,7 @@ def main():
     gr.write()
     print gr.update_link("b", "c", 8)
     gr.write()
-    print gr.update_link("b", "c", 10)
+    print gr.update_link("b", "c", 9)
     gr.write()
     #print gr.remove_node("a")
     #gr.write()
