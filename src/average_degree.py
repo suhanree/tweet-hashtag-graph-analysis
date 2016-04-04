@@ -21,8 +21,8 @@ def extract_data(json_data):
                     "%a %b %d %H:%M:%S +0000 %Y")) + 0.5)
                 # 0.5 is added to make sure it has the correct integer value.
     except KeyError:
-        # If there is not created_at field, set timestamp as 0.
-        print "KeyError for the key, created_at : timestamp will be 0."
+        # If 'created_at' field does not exist, set timestamp as 0.
+        #print "KeyError for the key, created_at : timestamp will be 0."
         timestamp = 0
 
     try:
@@ -49,10 +49,15 @@ def main(input_filename, output_filename):
         with open(output_filename, 'w') as f_out: # Opening output file
             for line in f_in: # For every tweet
                 json_data = json.loads(line) # dict representing tweet
+
+                # Checking for control data (if there is less than 3 fields).
+                # In those cases, we will skip the data.
+                if len(json_data) < 3:
+                    continue
+
                 # Extract timestamp (int) and a list of hashtags (str, case
                 # sensitive)
                 (timestamp, hashtags) = extract_data(json_data)
-
 
                 # Check the timestamp first.
                 if timestamp <= time_threshold: # too old for our graph.
@@ -66,13 +71,16 @@ def main(input_filename, output_filename):
                 num_hashtags = len(hashtags)
                 for i in range(num_hashtags):
                     for j in range(i+1, num_hashtags):
+
                         # First, check for duplicate hashtags
                         if hashtags[i] == hashtags[j]:
                             continue
+
                         # Second, try to add both nodes (this method will do nothing
                         # if the given node already exists)
                         gr.add_node(hashtags[i])
                         gr.add_node(hashtags[j])
+
                         # Third, (1) try to find if the link already exists;
                         # and (2) if so, what the timestamp of that link is.
                         # Here timestamp (epoch time) is a non-negative
