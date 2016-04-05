@@ -26,7 +26,10 @@ dealing with here changes constantly, I decided to use the dictionary of sets
 libraries.
 Each node becomes a `key` of the dictionary, and a set of nodes representing 
 links from the given node is the associated `value`.
-Then we can add, look up, and remove nodes and links in `O(1)` time.
+Then we can add, look up, and remove nodes and links in `O(1)` time (if we only
+consider the graph structure, since the priority queue is used additionally to 
+store time information for links, adding/removing links will take `O(logN)`
+time where `N` is the number of links).
 
 ## Tools
 Python 2.7 is used for this problem, and imported libraries are `sys`, `time`,
@@ -82,8 +85,9 @@ links will be removed here if necessary).
 This class represents the indexed priority queue, and it will be used by
 `TimeWindowGraph` class.
 
-1. It uses the binary heap structure.
-2. Two directories to keep the relations between indices and keys value. 
+1. It uses the binary heap structure (represented by a numpy array).
+2. Two directories to keep the relations between indices and keys value are
+used additionally. 
 3. Each datapoint will be (key, value) pair, and the priority will be 
 determined by the value.
 
@@ -108,7 +112,7 @@ Public methods for this class are:
 
 1. Missing fields: To find the time information for a tweet in json format, 
     `created_at` field is used, and to find hashtags, `entities` field is used.
-    Somehow those fields don't exist, timestamp is set to 0, and
+    If those fields don't exist somehow, timestamp is set to 0, and
     no hashtag is assumed.
 
 2. Control data: There are some control data in the stream of tweets. To skip
@@ -121,7 +125,7 @@ Public methods for this class are:
 4. Multiple links: Only one link can exist between two nodes, but the time
    information for that link will be updated if the time is more recent.
 
-## Complexities.
+## Complexities
 Time and space complexities are briefly discussed here.
 
 Adding/removing/looking up a node: `O(1)`
@@ -131,6 +135,10 @@ Adding/removing/looking up a link: `O(logN)` where `N` is the number of links.
 Getting the information of the oldest link: `O(1)`
 
 Removing the oldest link: `O(logN)` where `N` is the number of links.
+
+Computing the average degree: `O(1)` because it is simply 
+`2 * (number of links) / (number of nodes)`, and getting 
+the numbers of nodes and links are `O(1)`.
 
 Space-wise it has some redundancies when storing node and link information.
 Nodes are directly represented by hashtag strings (in unicode) and links are 
@@ -145,6 +153,16 @@ between indices and links, and `4E` is for an array of time information for all
 links, representing the binary heap structure.
 Here `2EH` is the size of the memory we need to store a list of all links, and
 it appears three times overall, once for the graph structure, and twice for the
-priority queue. These can be easily reduced by combining two classes if the
+priority queue. These can be easily reduced by combining two classes, if the
 memory is limited.
+
+## Final remarks
+Frankly I have past experience on building graph classes, and I have
+implemented indexed priority queues before, even though they were all
+written in C++.
+Hence, for the classes I implemented in this problem, I mostly rewrote C++ codes 
+into python codes. Then I had to write functions for reading the text file
+with tweet streams, and for extracting information about the time and hashtags
+out of a tweet in json format. It is straightforward afterward, if we use methods
+from the graph class.
 
