@@ -157,7 +157,7 @@ priority queue. These can be easily reduced by combining two classes, if the
 memory is limited.
 
 ## Final remarks
-Frankly I have past experience on building graph classes, and I have
+I have past experience on building graph classes, and I have
 implemented indexed priority queues before, even though they were all
 written in C++.
 Hence, for the classes I implemented in this problem, I mostly rewrote C++ codes 
