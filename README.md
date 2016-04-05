@@ -71,7 +71,7 @@ between node1 and node2.
 
 `remove_link(node1, node2)`: remove a given link.
 
-`remove_min_link`()`: remove a link with the minimum value 
+`remove_min_link()`: remove a link with the minimum value 
 (if there are more than one with
 the same minimum value, one is chosen without any order).
 
