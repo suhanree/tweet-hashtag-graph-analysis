@@ -61,7 +61,7 @@ def main(input_filename, output_filename):
 
                 # Check the timestamp first.
                 if timestamp <= time_threshold: # too old for our graph.
-                    break # do nothing for this tweet.
+                    continue # do nothing for this tweet.
                 elif timestamp > gr.current_time: # becomes the most recent tweet.
                     # Set current_time for the graph
                     # (it will remove old links older than threshold also)
