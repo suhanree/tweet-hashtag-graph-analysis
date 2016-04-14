@@ -1,5 +1,5 @@
 # Class for the indexed priority queue. It uses the binary heap structure and a
-# directory to keep the index information for given key value. Each datapoint
+# dictionary to keep the index information for given key value. Each datapoint
 # will be (key, value), and the priority will be determined by the value.
 
 import numpy as np
@@ -8,7 +8,7 @@ class indexedMinPQ:
     """
     Class for the indexed priority queue.
     (1) It uses the binary heap structure.
-    (2) Two directories to keep the relations between indices and keys value. 
+    (2) Two dictionaries to keep the relations between indices and keys value. 
     (3) Each datapoint will be (key, value) pair, and the priority will be 
         determined by the value.
     """

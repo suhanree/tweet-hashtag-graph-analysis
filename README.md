@@ -86,7 +86,7 @@ This class represents the indexed priority queue, and it will be used by
 `TimeWindowGraph` class.
 
 1. It uses the binary heap structure (represented by a numpy array).
-2. Two directories to keep the relations between indices and keys value are
+2. Two dictionaries to keep the relations between indices and keys value are
 used additionally. 
 3. Each datapoint will be (key, value) pair, and the priority will be 
 determined by the value.
@@ -145,10 +145,10 @@ Nodes are directly represented by hashtag strings (in unicode) and links are
 represented by a tuple of two hashtag strings. If we assume the average 
 size of a hashtag is `H` (byte), and the numbers of nodes and links are `V` and
 `E` respectively, the graph structure uses at least `H(V + 2E)` (bytes)
-for the directory of sets, and
+for the dictionary of sets, and
 the priority queue uses at least `2E(2H + 4) + 4E` (bytes), where the size
 of an integer is assumed to be 4 (byte), 
-`2E(2H + 4)` is for two directories that stores relations
+`2E(2H + 4)` is for two dictionaries that stores relations
 between indices and links, and `4E` is for an array of time information for all
 links, representing the binary heap structure.
 Here `2EH` is the size of the memory we need to store a list of all links, and
